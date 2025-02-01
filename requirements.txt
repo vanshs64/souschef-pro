@@ -1,0 +1,17 @@
+requests
+bs4
+beautifulsoup4
+# recipe.py
+urllib.request
+urllib.error
+recipe_scrapers
+
+# server.py
+flask
+flask_cors
+
+# interpret.py
+openai
+os
+dotenv
+ast

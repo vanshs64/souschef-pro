@@ -18,16 +18,15 @@ const RecipeForm: React.FC = () => {
 
   return (
     <div className="recipe-input-container">
-      <h2 className="recipe-prompt">What are we cooking today?</h2>
+      <h2 className="recipe-prompt">2 What are we cooking today?</h2>
       <form onSubmit={handleRecipeSubmit} className="recipe-input-form">
         {error && <div className="error-message">{error}</div>}
         <div className="input-group">
-          <textarea
-            id="recipe-input"
-            value={recipeInput}
-            onChange={(e) => setRecipeInput(e.target.value)}
-            placeholder="Paste a recipe URL or instructions here..."
-            rows={4}
+          <input
+            type="url"
+            name="recipeURL-2"
+            placeholder="Enter recipe URL"
+            className="rounded-input"
           />
           <button type="submit">Process</button>
         </div>

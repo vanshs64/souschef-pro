@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 import ast
 
+from recipe import get_recipe
 
 # Load environment variables from .env file
 load_dotenv()
@@ -29,16 +30,15 @@ def organize_instructions(instructions):
         {
             "role": "user",
             "content": (
-                "Given the following list of instructions, organize them into a nested structure "
+                "Given the following list of recipe instructions, organize them into a nested structure "
                 "where steps that can be performed simultaneously or multitasked are grouped together. "
-                "Return the result as a nested list structure without any additional words. Here is the input list:\n\n"
+                "Return the result as a nested list structure without any additional words or notation. Here is the input list:\n\n"
                 f"{instructions}\n\nOrganized instructions:"
             ),
         },
     ]
 
 
-    
     try:
         response = openai.chat.completions.create(
             model = "gpt-4o",
@@ -47,7 +47,8 @@ def organize_instructions(instructions):
         )
         # Parse the response text to extract the organized list
         organized_instructions = response.choices[0].message.content
-        return prune(organized_instructions)
+        print(organized_instructions)
+        return organized_instructions
     
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -68,13 +69,16 @@ def prune(response_text):
         response_text = response_text[5:]  # Remove '```py\n'
     if response_text.startswith("```python"):
         response_text = response_text[9:]  # Remove '```py\n'
+    if response_text.startswish("```plaintext"):
+        response_text = response_text[12:]  # Remove '```plaintext\n'
+
     if response_text.endswith("```"):
         response_text = response_text[:-3]  # Remove '```'
     
     return response_text
 
-def get_organized_instruction(instructions):
-
+def get_organized_instructions(instructions):
+    # converts the already organized instructions (from a string) to a literal array (list)
     organized = ast.literal_eval(organize_instructions(instructions))
 
     return organized
@@ -82,16 +86,11 @@ def get_organized_instruction(instructions):
 
 # Example usage
 if __name__ == "__main__":
-    api_key = "your_openai_api_key_here"
-    instructions = [
-        "Gather all ingredients. Preheat the oven to 375 degrees F (190 degrees C).",
-        "Stir flour, baking soda, and baking powder together in a small bowl.",
-        "Beat sugar and butter together in a large bowl with an electric mixer until smooth.",
-        "Beat in egg and vanilla.",
-        "Gradually blend in flour mixture.",
-        "Roll dough into walnut-sized balls and place 2 inches apart onto ungreased baking sheets.",
-        "Bake in the preheated oven until edges are golden, 8 to 10 minutes. Cool on the baking sheets briefly before removing to a wire rack to cool completely."
-    ]
+    # Example recipe URL
+    url = "https://www.allrecipes.com/recipe/45040/pav-bhaji/"
+    instructions = get_recipe(url)["instructions"]
     organized = ast.literal_eval(organize_instructions(instructions))
     print("Organized Instructions:", organized)
     print(type(organized))
+
+    

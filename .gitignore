@@ -5,6 +5,10 @@ node_modules
 
 package-lock.json
 
+/backend/.env
+.env
+
+
 # testing
 /coverage
 

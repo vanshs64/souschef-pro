@@ -1,72 +1,57 @@
 import { useState } from 'react';
 import reactLogo from './assets/react.svg';
-import CookingPotLogo from './components/ChefLogo.tsx'; // Import the ChefLogo component
-
-import RecipeForm from './components/RecipeForm.tsx'; // Import the RecipeForm component
-
+import CookingPotLogo from './components/ChefLogo.tsx';
+import RecipeForm from './components/RecipeForm.tsx';
+import RenderTree from './components/RenderTree.tsx';
 import './App.css';
-
 import "reactflow/dist/style.css";
 
 type Instruction = string | Instruction[];
 
-// NEXT: this isntructions array needs to be populated with the actual instructions once the fetch request is made and received with the actual body of the recipe + organized instructions after it is interpreted (interpret.py)
-const instructions: Instruction[] = [];
-
-
-// Global step counter to ensure unique step numbers
-let stepCounter = 1;
-
-// Recursive function to render the tree
-const renderTree = (steps: Instruction[], level = 0): JSX.Element => {
-  return (
-    <div className="tree-level">
-      {steps.map((step, index) => {
-        const currentStepNumber = stepCounter++;
-        return (
-          <div className="tree-node-container" key={`${level}-${index}`}>
-            <div className="step-label">Step {currentStepNumber}</div>
-            <div className="tree-node">
-              {Array.isArray(step) ? null : step}
-            </div>
-            {Array.isArray(step) && (
-              <div className="tree-branch">
-                <div className="tree-line"></div>
-                {renderTree(step, level + 1)}
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
-};
-
 function App() {
-  const [recipe, setRecipe] = useState<string>('');
+  const [title, setTitle] = useState<string>('');
+  const [totalTime, setTotalTime] = useState<number>(0);
+  const [yields, setYields] = useState<string>('');
+  const [ingredients, setIngredients] = useState<string[]>([]);
+  const [instructions, setInstructions] = useState<Instruction[]>([]);
+  const [recipeFetched, setRecipeFetched] = useState<boolean>(false);
 
-  // get the recipe from the flask server --> FETCH is the most important thing here
   const fetchRecipe = async () => {
-    const recipeURL = (document.getElementsByName("recipeURL")[0] as HTMLInputElement).value;
-    const response = await fetch("http://localhost:5000/scrape_recipe", {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ url: recipeURL }),
-    });
-    const data = await response.json();
-    setRecipe(data.instructions);
-    console.log("a recipe was received, here it is:")
-    console.log(data.instructions);
+    try {
+      const recipeURL = (document.getElementsByName("recipeURL")[0] as HTMLInputElement).value;
+
+      const response = await fetch("http://localhost:5000/scrape_recipe", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ url: recipeURL }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setTitle(data.title);
+      setTotalTime(data.total_time);
+      setYields(data.yields);
+      setIngredients(data.ingredients);
+      setInstructions(data.instructions);
+      setRecipeFetched(true);
+
+      console.log("A recipe was received, here it is:");
+      console.log(typeof data.instructions);
+      console.log(data.instructions);
+    } catch (error) {
+      console.error("There was an error fetching the recipe:", error);
+    }
   };
 
   return (
     <>
-      {/* Replace the image logo with the ChefLogo component */}
       <div className="title-container">
         <CookingPotLogo/>
-        
         <div className="logo-header-container">
           <h2>SousChef</h2>
           <a href="https://react.dev" target="_blank">
@@ -77,6 +62,19 @@ function App() {
         <RecipeForm />
       </div>
 
+        {recipeFetched && (
+          <div className="sidebar">
+            <h2>{title}</h2>
+            <p>Total Time: {totalTime} minutes</p>
+            <p>Yields: {yields}</p>
+            <h3>Ingredients:</h3>
+            <ul>
+              {ingredients.map((ingredient, index) => (
+                <li key={index}>{ingredient}</li>
+              ))}
+            </ul>
+          </div>)
+        }
       <div className="card">
         <input
           type="url"
@@ -89,13 +87,11 @@ function App() {
           Get Recipe
         </button>
 
-        <p className=''>Here is the recipe: {recipe}</p>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+        <p className=''>Here is the recipe: {instructions}</p>
       </div>
-      
-      <div className="tree-container">{renderTree(instructions)}</div>
+
+
+      <div className="tree-container">{RenderTree(instructions)}</div>
     </>
   );
 }

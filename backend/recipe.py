@@ -51,6 +51,7 @@ if __name__ == "__main__":
     # Example recipe URL
     url = "https://www.allrecipes.com/recipe/45040/pav-bhaji/"
     recipe = get_recipe(url)
+    print(recipe)
     if recipe is None:
         print("Recipe unable to be scraped.")
     else:

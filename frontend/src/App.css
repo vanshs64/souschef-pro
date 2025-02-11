@@ -153,3 +153,31 @@ button {
 button:hover {
   background-color: #2575fc;
 }
+
+/* for the siderbar */
+
+.app-container {
+  display: flex;
+}
+
+.sidebar {
+  width: 300px;
+  padding: 20px;
+  background-color: #f8f8f8;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.main-content {
+  margin-left: 320px;
+  flex: 1;
+  padding: 20px;
+}
+
+li {
+  text-align: left;
+}
+

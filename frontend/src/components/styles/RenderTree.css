@@ -1,0 +1,42 @@
+/* Container for each level of steps */
+.tree-level {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+  }
+  
+  /* Container for each step and its children */
+  .tree-node-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  
+  /* Step label styling */
+  .step-label {
+    font-weight: bold;
+    min-width: 80px;
+    margin-right: 10px;
+  }
+  
+  /* Step content styling */
+  .tree-node {
+    background-color: #f0f0f0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-right: 10px;
+  }
+  
+  /* Container for parallel steps */
+  .tree-branch {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  /* Vertical line for visual hierarchy (optional) */
+  .tree-line {
+    width: 2px;
+    background-color: #ccc;
+    margin: 0 10px;
+  }

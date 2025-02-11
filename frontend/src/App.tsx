@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import reactLogo from './assets/react.svg';
+import logo from './assets/logo.png';
+
 import CookingPotLogo from './components/ChefLogo.tsx';
-import RecipeForm from './components/RecipeForm.tsx';
 import RenderTree from './components/RenderTree.tsx';
+
 import './App.css';
+import './components/styles/RecipeForm.css'
 import "reactflow/dist/style.css";
 
 type Instruction = string | Instruction[];
@@ -16,9 +18,23 @@ function App() {
   const [instructions, setInstructions] = useState<Instruction[]>([]);
   const [recipeFetched, setRecipeFetched] = useState<boolean>(false);
 
+  const isValidURL = (url: string) => {
+    try {
+      new URL(url);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
   const fetchRecipe = async () => {
     try {
-      const recipeURL = (document.getElementsByName("recipeURL")[0] as HTMLInputElement).value;
+      const recipeURL = (document.getElementsByName("recipeURL-2")[0] as HTMLInputElement).value;
+
+      if (!isValidURL(recipeURL)) {
+        setErrorMessage("Please enter a valid URL.");
+        return;
+      }
 
       const response = await fetch("http://localhost:5000/scrape_recipe", {
         method: "POST",
@@ -48,48 +64,70 @@ function App() {
     }
   };
 
+  const [recipeInput, setRecipeInput] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const handleRecipeSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // if input is empty, set error message
+    if (!recipeInput.trim()) {
+      setErrorMessage("Please enter a recipe URL or instructions.");
+      return;
+    }
+
+    if (!isValidURL(recipeInput)) {
+      setErrorMessage("Please enter a valid URL.");
+      return;
+    }
+
+    setErrorMessage("");
+    console.log("Recipe Input:", recipeInput);
+    fetchRecipe(); // Call fetchRecipe if there are no errors
+  };
+
   return (
     <>
       <div className="title-container">
-        <CookingPotLogo/>
         <div className="logo-header-container">
-          <h2>SousChef</h2>
-          <a href="https://react.dev" target="_blank">
-            <img src={reactLogo} className="logo react" alt="React logo" />
-          </a>
+            <a href="/">
+              <img src={logo} className="logo souschef" alt="My logo" />
+            </a>
         </div>
         <h1>What are we cooking today?</h1>
-        <RecipeForm />
+
+        <div className="recipe-input-container">
+            <p className="recipe-prompt">🍳 Ask <strong>SousChef</strong> 🥘 </p>
+          <form onSubmit={handleRecipeSubmit} className="recipe-input-form">
+            <div className="error-message">{errorMessage}</div>
+            <div className="input-group">
+              <input
+                type="url"
+                name="recipeURL-2"
+                placeholder="Enter recipe URL"
+                className="rounded-input"
+                value={recipeInput}
+                onChange={(e) => setRecipeInput(e.target.value)}
+              />
+              <button type="submit">Process</button>
+            </div>
+          </form>
+        </div>
       </div>
 
-        {recipeFetched && (
-          <div className="sidebar">
-            <h2>{title}</h2>
-            <p>Total Time: {totalTime} minutes</p>
-            <p>Yields: {yields}</p>
-            <h3>Ingredients:</h3>
-            <ul>
-              {ingredients.map((ingredient, index) => (
-                <li key={index}>{ingredient}</li>
-              ))}
-            </ul>
-          </div>)
-        }
-      <div className="card">
-        <input
-          type="url"
-          name="recipeURL"
-          placeholder="Enter recipe URL"
-          className='formButton'
-        />
-
-        <button onClick={fetchRecipe}>
-          Get Recipe
-        </button>
-
-        <p className=''>Here is the recipe: {instructions}</p>
-      </div>
-
+      {recipeFetched && (
+        <div className="sidebar">
+          <h2>{title}</h2>
+          <p>Total Time: {totalTime} minutes</p>
+          <p>Yields: {yields}</p>
+          <h3>Ingredients:</h3>
+          <ul>
+            {ingredients.map((ingredient, index) => (
+              <li key={index}>{ingredient}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="tree-container">{RenderTree(instructions)}</div>
     </>

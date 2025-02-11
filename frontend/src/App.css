@@ -21,24 +21,40 @@ body {
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.logo.souschef:hover {
+  filter: drop-shadow(0 0 2em #2575fc);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+@keyframes logo-stir {
+  0%, 100% {
+    transform: translateX(0);
   }
-  to {
-    transform: rotate(360deg);
+  50% {
+    transform: translateX(10px);
   }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+  .logo {
+    animation: logo-stir infinite 2s ease-in-out;
   }
 }
+
+
+/* make the logo and title side by side */
+
+/* make the logo and title side by side and centered */
+.logo-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the logo and title */
+  gap: 10px; /* Adjust spacing between text and logo */
+}
+
+.logo-header-container h2 {
+  margin: 0; /* Remove default margin */
+}
+
 
 .card {
   padding: 2em;
@@ -112,7 +128,7 @@ h1 {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 2.5em;
-  margin-bottom: 1em;
+  padding-bottom: 0.2em; /* Add padding to prevent text cut off */
 }
 
 h2 {
@@ -181,3 +197,25 @@ li {
   text-align: left;
 }
 
+
+
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+strong {
+  font-weight: bold;
+  background: linear-gradient(90deg, #6a11cb, #2575fc, #8e2de2, #4a00e0);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-animation 5s ease infinite;
+}

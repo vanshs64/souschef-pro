@@ -1,3 +1,5 @@
+import './styles/RenderTree.css';
+
 // File: src/components/RenderTree.tsx
 
 // Define the Instruction type
@@ -7,21 +9,25 @@ type Instruction = string | Instruction[];
 let stepCounter = 1;
 
 // Recursive function to render the tree
-export const renderTree = (steps: Instruction[], level = 0): JSX.Element => {
+const RenderTree = (steps: Instruction[], level = 0): JSX.Element => {
   return (
     <div className="tree-level">
       {steps.map((step, index) => {
         const currentStepNumber = stepCounter++;
         return (
           <div className="tree-node-container" key={`${level}-${index}`}>
+            {/* Step Label */}
             <div className="step-label">Step {currentStepNumber}</div>
+
+            {/* Step Content */}
             <div className="tree-node">
               {Array.isArray(step) ? null : step}
             </div>
+
+            {/* Render Parallel Steps Side by Side */}
             {Array.isArray(step) && (
               <div className="tree-branch">
-                <div className="tree-line"></div>
-                {renderTree(step, level + 1)}
+                {RenderTree(step, level + 1)}
               </div>
             )}
           </div>
@@ -30,3 +36,5 @@ export const renderTree = (steps: Instruction[], level = 0): JSX.Element => {
     </div>
   );
 };
+
+export default RenderTree

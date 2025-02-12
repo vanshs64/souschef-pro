@@ -1,101 +1,137 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import CookingPotLogo from './components/ChefLogo.tsx'; // Import the ChefLogo component
-
-import RecipeForm from './components/RecipeForm.tsx'; // Import the RecipeForm component
-
+import { useState, useEffect } from 'react';
+import logo from './assets/logo.png';
 import './App.css';
-
+import './components/styles/RecipeForm.css';
 import "reactflow/dist/style.css";
+import { useNavigate } from 'react-router-dom';
 
 type Instruction = string | Instruction[];
 
-// NEXT: this isntructions array needs to be populated with the actual instructions once the fetch request is made and received with the actual body of the recipe + organized instructions after it is interpreted (interpret.py)
-const instructions: Instruction[] = [];
-
-
-// Global step counter to ensure unique step numbers
-let stepCounter = 1;
-
-// Recursive function to render the tree
-const renderTree = (steps: Instruction[], level = 0): JSX.Element => {
-  return (
-    <div className="tree-level">
-      {steps.map((step, index) => {
-        const currentStepNumber = stepCounter++;
-        return (
-          <div className="tree-node-container" key={`${level}-${index}`}>
-            <div className="step-label">Step {currentStepNumber}</div>
-            <div className="tree-node">
-              {Array.isArray(step) ? null : step}
-            </div>
-            {Array.isArray(step) && (
-              <div className="tree-branch">
-                <div className="tree-line"></div>
-                {renderTree(step, level + 1)}
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
-};
-
 function App() {
-  const [recipe, setRecipe] = useState<string>('');
+  const navigate = useNavigate();
 
-  // get the recipe from the flask server --> FETCH is the most important thing here
+  const [title, setTitle] = useState<string>('');
+  const [totalTime, setTotalTime] = useState<number>(0);
+  const [yields, setYields] = useState<string>('');
+  const [ingredients, setIngredients] = useState<string[]>([]);
+  const [instructions, setInstructions] = useState<Instruction[]>([]);
+
+  const [recipeFetched, setRecipeFetched] = useState<boolean>(false);
+  const [recipeInput, setRecipeInput] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const isValidURL = (url: string) => {
+    try {
+      new URL(url);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
+  // redirect or "navigate" to the recipe page ONLY if "recipeFetched" is true, and this only happens once 
+  // first, form is submitted, url is verified to be valid (handle recipe submit), and then fetchRecipe is called and completed!!
+
+  useEffect(() => {
+    if (recipeFetched) {
+      navigate("/recipe", { state: { 
+        title: title, 
+        totalTime: totalTime, 
+        yields: yields, 
+        ingredients: ingredients, 
+        instructions: instructions 
+      }});
+    }
+  }, [recipeFetched]);
+
   const fetchRecipe = async () => {
-    const recipeURL = (document.getElementsByName("recipeURL")[0] as HTMLInputElement).value;
-    const response = await fetch("http://localhost:5000/scrape_recipe", {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ url: recipeURL }),
-    });
-    const data = await response.json();
-    setRecipe(data.instructions);
-    console.log("a recipe was received, here it is:")
-    console.log(data.instructions);
+    try {
+      const recipeURL = (document.getElementsByName("recipeURL")[0] as HTMLInputElement).value;
+
+      if (!isValidURL(recipeURL)) {
+        setErrorMessage("Please enter a valid URL.");
+        return;
+      }
+
+      const response = await fetch("http://localhost:5000/scrape_recipe", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ url: recipeURL }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("first, the actual title is: ", data.title);
+
+      setTitle(data.title);
+      setTotalTime(data.total_time);
+      setYields(data.yields);
+      setIngredients(data.ingredients);
+      setInstructions(data.instructions);
+      setRecipeFetched(true);
+
+      console.log("A recipe was received, here it is:");
+      console.log(data.instructions);
+
+    } catch (error) {
+      console.error("There was an error fetching the recipe:", error);
+    }
+  };
+
+  const handleRecipeSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!recipeInput.trim()) {
+      setErrorMessage("Please enter a recipe URL or instructions.");
+      return;
+    }
+
+    if (!isValidURL(recipeInput)) {
+      setErrorMessage("Please enter a valid URL.");
+      return;
+    }
+
+    setErrorMessage("");
+    console.log("Recipe Input:", recipeInput);
+    fetchRecipe(); // Call fetchRecipe if there are no errors
   };
 
   return (
     <>
-      {/* Replace the image logo with the ChefLogo component */}
+    <div className='app-wrapper'>
+
       <div className="title-container">
-        <CookingPotLogo/>
-        
         <div className="logo-header-container">
-          <h2>SousChef</h2>
-          <a href="https://react.dev" target="_blank">
-            <img src={reactLogo} className="logo react" alt="React logo" />
+          <a href="/">
+            <img src={logo} className="logo souschef" alt="My logo" />
           </a>
         </div>
         <h1>What are we cooking today?</h1>
-        <RecipeForm />
+
+        <div className="recipe-input-container">
+          <p className="recipe-prompt">🍳 Ask <strong>SousChef</strong> 🥘 </p>
+          <form onSubmit={handleRecipeSubmit} className="recipe-input-form">
+            <div className="error-message">{errorMessage}</div>
+            <div className="input-group">
+              <input
+                type="url"
+                name="recipeURL"
+                placeholder="Enter recipe URL"
+                className="rounded-input"
+                value={recipeInput}
+                onChange={(e) => setRecipeInput(e.target.value)}
+              />
+              <button type="submit">Process</button>
+            </div>
+          </form>
+        </div>
       </div>
-
-      <div className="card">
-        <input
-          type="url"
-          name="recipeURL"
-          placeholder="Enter recipe URL"
-          className='formButton'
-        />
-
-        <button onClick={fetchRecipe}>
-          Get Recipe
-        </button>
-
-        <p className=''>Here is the recipe: {recipe}</p>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      
-      <div className="tree-container">{renderTree(instructions)}</div>
+    </div>
     </>
   );
 }

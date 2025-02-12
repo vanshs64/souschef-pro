@@ -1,3 +1,5 @@
+// discontinued
+
 import { motion } from 'framer-motion';
 
 const CookingPotLogo = () => {

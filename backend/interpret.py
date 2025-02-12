@@ -5,11 +5,14 @@ import ast
 
 from recipe import get_recipe
 
+
 # Load environment variables from .env file
 load_dotenv()
 
 # Initialize OpenAI API key
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
+## ERROR HERE ^^ dk why it isn't getting the api key unless explicitly passed
 
 def organize_instructions(instructions):
     """

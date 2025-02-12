@@ -15,6 +15,7 @@ function App() {
   const [yields, setYields] = useState<string>('');
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [instructions, setInstructions] = useState<Instruction[]>([]);
+
   const [recipeFetched, setRecipeFetched] = useState<boolean>(false);
   const [recipeInput, setRecipeInput] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -102,6 +103,8 @@ function App() {
 
   return (
     <>
+    <div className='app-wrapper'>
+
       <div className="title-container">
         <div className="logo-header-container">
           <a href="/">
@@ -128,6 +131,7 @@ function App() {
           </form>
         </div>
       </div>
+    </div>
     </>
   );
 }

@@ -10,7 +10,7 @@ CORS(app)  # Allow requests from frontend (localhost:3000)
 # Example recipe URL
 website = "https://www.allrecipes.com/recipe/45040/pav-bhaji/"
 
-test_recipe = test_instructions = {
+test_recipe = {
     'title': 'Pav Bhaji',
     'total_time': 50,
     'yields': '4 servings',

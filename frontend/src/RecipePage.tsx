@@ -1,19 +1,30 @@
-import { Navigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import RenderTree from './components/RenderTree';
 
-// recipe page information function takes in a dictionary of key value pairs (string, any) or null type as input
-function Recipe({ recipeInformation }: { recipeInformation: Record<string, any> | null }) {
+const RecipePage = () => {
+  const location = useLocation();
+  const { title, totalTime, yields, ingredients, instructions } = location.state || {};
 
-  if (!recipeInformation) {
-    return <Navigate to={"/"} />;
-  }
+  console.log("a recipe was argued to the recipe page, here it is: ", location.state);
 
-  // Render the recipe information here
   return (
-    <div>
-      {/* Render recipe details */}
-      Hello ABCD
+    <div className="recipe-container">
+      <p>{title}</p>
+      <p>{ingredients}</p>
+      <p>{instructions}</p>
+      <h1>{title}</h1>
+      <p>Total Time: {totalTime} minutes</p>
+      <p>Yields: {yields}</p>
+      <h3>Ingredients:</h3>
+      <ul>
+        {ingredients?.map((ingredient: string, index: number) => (
+          <li key={index}>{ingredient}</li>
+        ))}
+      </ul>
+      <h3>Instructions:</h3>
+      <div className="tree-container">{instructions && RenderTree(instructions)}</div>
     </div>
   );
-}
+};
 
-export default Recipe
+export default RecipePage;

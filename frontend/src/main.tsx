@@ -10,7 +10,7 @@ createRoot(document.getElementById('root')!).render(
     <Router>
       <Routes>
         <Route path="/" element={<App />} />
-        <Route path="/recipe" element={<RecipePage recipeInformation={null} />} />
+        <Route path="/recipe" element={<RecipePage />} />
         {/* Add more routes as needed */}
       </Routes>
     </Router>

@@ -1,130 +1,285 @@
-/* Carousel Container */
-.carousel-container {
-  position: relative;
-  width: 800px; /* Adjust based on preference */
-  height: 600px; /* Increased height to accommodate text */
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Base Layout */
+.recipe-page {
+  max-width: 1400px;
   margin: 0 auto;
-  background: #f5f5f5; /* Light background for better contrast */
-  border-radius: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: #f8fafc;
 }
 
-/* Carousel Wrapper (Holds the Main Card) */
-.carousel-wrapper {
+/* Recipe Header */
+.recipe-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 1rem;
+}
+
+.recipe-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+
+.recipe-meta {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  color: #64748b;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Main Content Layout */
+.content-wrapper {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+/* Ingredients Sidebar */
+.ingredients-sidebar {
+  width: 25%;
+  position: sticky;
+  top: 2rem;
+}
+
+.ingredients-card {
+  background-color: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.ingredients-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+
+.ingredients-list {
+  list-style: none;
+  padding: 0;
+}
+
+.ingredients-list li {
+  color: #64748b;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.ingredients-list li:last-child {
+  border-bottom: none;
+}
+
+/* Carousel Section */
+.carousel-section {
+  width: 75%;
+}
+
+.carousel-card {
+  background-color: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+/* Progress Bar */
+.progress-container {
+  margin-bottom: 1.5rem;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.progress-text {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.progress-bar {
   width: 100%;
-  height: 70%; /* Adjust based on preference */
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Carousel Track (Holds the Main Card) */
-.carousel-track {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  height: 100%;
-}
-
-/* Step Cards */
-.step-card {
-  position: absolute;
-  width: 400px; /* Adjust based on preference */
-  height: 300px; /* Adjust based on preference */
-  border-radius: 15px;
+  height: 0.5rem;
+  background-color: #e2e8f0;
+  border-radius: 9999px;
   overflow: hidden;
-  background: white;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out, z-index 0.5s ease-in-out;
 }
 
-/* Active Card (Centered) */
-.step-card.active {
-  transform: scale(1);
-  opacity: 1;
-  z-index: 2;
+.progress-fill {
+  height: 100%;
+  background-color: #3b82f6;
+  transition: width 0.3s ease;
 }
 
-/* Inactive (Hidden) Cards */
-.step-card.inactive {
-  transform: scale(0.8);
-  opacity: 0;
-  z-index: 1;
+/* Step Content */
+.step-content {
+  min-height: 400px;
 }
 
-/* Step Title */
 .step-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 15px;
-  color: #333;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 1rem;
 }
 
-/* Step Instructions */
-.step-instructions {
-  list-style-type: disc;
-  padding-left: 20px;
-  color: #555;
-  font-size: 16px;
+.step-list {
+  list-style: none;
+  padding: 0;
+}
+
+.step-list li {
+  display: flex;
+  gap: 0.75rem;
+  color: #64748b;
+  margin-bottom: 1rem;
   line-height: 1.6;
 }
 
-.step-instructions li {
-  margin-bottom: 10px;
+.step-bullet {
+  color: #3b82f6;
+  font-weight: 500;
 }
 
-/* Mini-Bar (Holds All Step Previews) */
-.mini-bar {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 15%; /* Adjust based on preference */
+/* Navigation */
+.navigation {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-button {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px; /* Spacing between mini-cards */
-  background: rgba(255, 255, 255, 0.9);
-  padding: 10px;
-  border-top: 1px solid #ddd;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
 }
 
-/* Mini-Cards (Step Previews) */
-.mini-card {
-  width: 40px; /* Adjust based on preference */
-  height: 40px; /* Adjust based on preference */
-  border-radius: 50%;
-  background: #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, background 0.3s;
+.nav-button.prev {
+  background-color: #f1f5f9;
+  color: #64748b;
 }
 
-.mini-card.active {
-  transform: scale(1.2);
-  background: #ff6b6b; /* Highlight color */
+.nav-button.prev:hover:not(:disabled) {
+  background-color: #e2e8f0;
+}
+
+.nav-button.next {
+  background-color: #3b82f6;
   color: white;
 }
 
-.mini-card:not(.active) {
-  opacity: 0.6;
+.nav-button.next:hover:not(:disabled) {
+  background-color: #2563eb;
 }
 
-/* Mini-Card Number */
-.mini-card-number {
-  font-size: 16px;
-  font-weight: bold;
+.nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-
-.button {
-  margin: 0.5rem;
+/* Step Dots */
+.step-dots {
+  display: flex;
+  gap: 0.5rem;
 }
+
+.step-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 9999px;
+  background-color: #e2e8f0;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.step-dot.active {
+  background-color: #3b82f6;
+  transform: scale(1.25);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .content-wrapper {
+    flex-direction: column;
+  }
+  
+  .ingredients-sidebar,
+  .carousel-section {
+    width: 100%;
+  }
+  
+  .ingredients-sidebar {
+    position: static;
+    margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .recipe-page {
+    padding: 1rem;
+  }
+  
+  .carousel-card {
+    padding: 1rem;
+  }
+  
+  .step-content {
+    min-height: 300px;
+  }
+}
+/* ... (previous CSS remains the same until ingredients list) ... */
+
+.ingredients-list li {
+  color: #64748b;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  transition: all 0.2s ease;
+  border-radius: 0.25rem;
+  cursor: default;
+}
+
+.ingredients-list li:hover {
+  background-color: #f8fafc;
+  padding-left: 1rem;
+  color: #1e293b;
+}
+
+.ingredients-list li:last-child {
+  border-bottom: none;
+}
+
+/* ... (previous CSS remains the same until step content) ... */
+
+.step-content {
+  min-height: 400px;
+  transition: all 0.3s ease-in-out;
+  transform-origin: center;
+}
+
+/* Add these new animation classes */
+.step-content.transitioning {
+  transform: scale(0.98);
+}
+
+.step-content.active {
+  transform: scale(1);
+}
+
+/* ... (rest of the previous CSS remains the same) ... */

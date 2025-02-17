@@ -33,8 +33,9 @@ def organize_instructions(instructions):
         {
             "role": "user",
             "content": (
-                "Given the following list of recipe instructions, organize them into a nested structure "
-                "where steps that can be performed simultaneously or multitasked are grouped together. "
+                "Given the following list of recipe instructions, organize them into a nested structure of no more than 3 layers of list levels."
+                "Groups steps that can be performed simultaneously or multitasked together."
+                "Include a 'header' within the list structure for each group of steps to describe the step in a few words so that the user can understand the the following steps before reading so much text."
                 "Return the result as a nested list structure without any additional words or notation. Here is the input list:\n\n"
                 f"{instructions}\n\nOrganized instructions:"
             ),
@@ -50,7 +51,7 @@ def organize_instructions(instructions):
         )
         # Parse the response text to extract the organized list
         organized_instructions = response.choices[0].message.content
-        print(organized_instructions)
+        # print(organized_instructions)
         return organized_instructions
     
     except Exception as e:
@@ -90,10 +91,15 @@ def get_organized_instructions(instructions):
 # Example usage
 if __name__ == "__main__":
     # Example recipe URL
-    url = "https://www.allrecipes.com/recipe/45040/pav-bhaji/"
-    instructions = get_recipe(url)["instructions"]
+    url = "https://www.indianhealthyrecipes.com/palak-paneer-recipe-easy-paneer-recipes-step-by-step-pics/"
+    recipe = get_recipe(url)
+    instructions = recipe["instructions"]
     organized = ast.literal_eval(organize_instructions(instructions))
-    print("Organized Instructions:", organized)
-    print(type(organized))
+    recipe["instructions"] = organized
+    print("")
+    print("")
+    print("")
+    print(recipe)
+    print(type(recipe))
 
     

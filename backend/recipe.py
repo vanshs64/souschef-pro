@@ -49,7 +49,7 @@ def get_recipe(url):
 
 if __name__ == "__main__":
     # Example recipe URL
-    url = "https://www.allrecipes.com/recipe/45040/pav-bhaji/"
+    url = "https://www.indianhealthyrecipes.com/palak-paneer-recipe-easy-paneer-recipes-step-by-step-pics/"
     recipe = get_recipe(url)
     print(recipe)
     if recipe is None:

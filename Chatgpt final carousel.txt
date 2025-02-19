@@ -1,76 +1,53 @@
 import './components/styles/Carousel.css';
 import { useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Clock, Users } from 'lucide-react';
 
-// Define the structure of the recipe data
-interface RecipeData {
+interface Recipe {
   title: string;
-  totalTime: number;
+  total_time: number;
   yields: string;
   ingredients: string[];
   instructions: Array<[string, (string | string[])[]]>;
 }
 
-// Define the structure of a step
-interface Step {
-  id: number;
-  title: string;
-  section: string;
-  steps: string[];
-}
-
 const RecipeCarousel = () => {
   const location = useLocation();
-  const recipe = location.state as RecipeData; // Get recipe data from useLocation
+  const recipe: Recipe | undefined = location.state;
 
   const [currentStep, setCurrentStep] = useState(0);
-  const [steps, setSteps] = useState<Step[]>([]);
+  const [steps, setSteps] = useState<{ id: number; title: string; section: string; steps: string[] }[]>([]);
 
-  // Parse instructions into steps
   useEffect(() => {
     if (!recipe?.instructions) return;
 
-    const parseInstructions = (instructions: Array<[string, (string | string[])[]]>): Step[] => {
-      let parsedSteps: Step[] = [];
+    const parseInstructions = (instructions: Array<[string, (string | string[])[]]>) => {
+      let parsedSteps: { id: number; title: string; section: string; steps: string[] }[] = [];
       let stepCounter = 1;
 
       instructions.forEach(([sectionTitle, content]) => {
         if (Array.isArray(content)) {
-          if (content.every((item) => typeof item === 'string')) {
-            // Handle simple string array, splitting sentences
-            parsedSteps.push({
-              id: stepCounter++,
-              title: sectionTitle,
-              section: sectionTitle,
-              steps: content.flatMap((step) =>
-                step.split(/(?<=\.)\s+/).map((s) => s.trim()).filter((s) => s.length > 0)
-              ),
-            });
-          } else {
-            // Handle nested arrays
-            content.forEach((subContent) => {
-              if (Array.isArray(subContent)) {
-                parsedSteps.push({
-                  id: stepCounter++,
-                  title: sectionTitle,
-                  section: sectionTitle,
-                  steps: subContent.flatMap((step) =>
-                    typeof step === 'string'
-                      ? step.split(/(?<=\.)\s+/).map((s) => s.trim()).filter((s) => s.length > 0)
-                      : []
-                  ),
-                });
-              } else if (typeof subContent === 'string') {
-                parsedSteps.push({
-                  id: stepCounter++,
-                  title: sectionTitle,
-                  section: sectionTitle,
-                  steps: subContent.split(/(?<=\.)\s+/).map((s) => s.trim()).filter((s) => s.length > 0),
-                });
-              }
-            });
-          }
+          content.forEach(subContent => {
+            if (typeof subContent === 'string') {
+              parsedSteps.push({
+                id: stepCounter++,
+                title: sectionTitle,
+                section: sectionTitle,
+                steps: subContent.split(/(?<=\.)\s+/).map(s => s.trim()).filter(s => s.length > 0),
+              });
+            } else if (Array.isArray(subContent)) {
+              parsedSteps.push({
+                id: stepCounter++,
+                title: sectionTitle,
+                section: sectionTitle,
+                steps: subContent.flatMap(step =>
+                  typeof step === 'string'
+                    ? step.split(/(?<=\.)\s+/).map(s => s.trim()).filter(s => s.length > 0)
+                    : []
+                ),
+              });
+            }
+          });
         }
       });
 
@@ -78,23 +55,15 @@ const RecipeCarousel = () => {
     };
 
     setSteps(parseInstructions(recipe.instructions));
-  }, [recipe]);
+  }, [recipe?.instructions]);
 
-  // Navigate to the next step
-  const nextStep = () => {
-    setCurrentStep((prev) => (prev + 1) % steps.length);
-  };
+  const nextStep = () => setCurrentStep((prev) => (prev + 1) % steps.length);
+  const prevStep = () => setCurrentStep((prev) => (prev - 1 + steps.length) % steps.length);
 
-  // Navigate to the previous step
-  const prevStep = () => {
-    setCurrentStep((prev) => (prev - 1 + steps.length) % steps.length);
-  };
-
-  // Show loading state if steps are not yet parsed
-  if (steps.length === 0) {
+  if (!recipe) {
     return (
       <div className="recipe-page">
-        <div className="loading">Loading recipe...</div>
+        <div className="loading">No recipe data found.</div>
       </div>
     );
   }
@@ -201,3 +170,5 @@ const RecipeCarousel = () => {
 };
 
 export default RecipeCarousel;
+
+# chatgpt

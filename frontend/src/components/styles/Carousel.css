@@ -19,6 +19,8 @@
   font-weight: 700;
   color: #1e293b;
   margin-bottom: 1rem;
+  margin-top: 0rem;
+
 }
 
 .recipe-meta {
@@ -125,6 +127,7 @@
 /* Step Content */
 .step-content {
   min-height: 400px;
+  min-width: 800px;
 }
 
 .step-title {

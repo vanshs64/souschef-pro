@@ -33,11 +33,54 @@ def organize_instructions(instructions):
         {
             "role": "user",
             "content": (
-                "Given the following list of recipe instructions, organize them into a nested structure of no more than 3 layers of list levels."
-                "Groups steps that can be performed simultaneously or multitasked together."
+                "Given the following recipe instructions, restructure them into a structured array where:"
+                "Each step has a header as the first item, which should be a **short descriptive title** summarizing those steps."
+                "The second and final item of each step will be a list/array containing the actual instructions (which could be multiple)."
+                "If a step has multiple alternative ways of preparation (e.g., 'OR' options), these should be grouped under the same header as separate instruction entries."
+                "Also group steps that can be performed simultaneously or multitasked together."
                 "Include a 'header' within the list structure for each group of steps to describe the step in a few words so that the user can understand the the following steps before reading so much text."
-                "Return the result as a nested list structure without any additional words or notation. Here is the input list:\n\n"
-                f"{instructions}\n\nOrganized instructions:"
+                "For example, this is what the structure must look like.\n\n"
+                """
+
+                [
+                    [
+                        "Prepare Ingredients",
+                        [
+                        "Start with ...",
+                        "Do this", 
+                        "Step 3"
+                        ]
+                    ],
+                    [
+                        "Rest the Dough",
+                        [
+                        "Step 4" will start to discolor."
+                        "Step 5",
+                        ]
+                    ],
+                    [
+                        "Roll Out the Dough",
+                        "Step 6",
+                        "For tagliatelle here is step 7."
+                    ],
+                    [
+                        "Store or Cook the Pasta",
+                        [
+                        "At this point you can cook the pasta immediately, dry it, refrigerate it, or freeze it."
+                        ]
+                    ],
+                    [
+                        "Cook the Tagliatelle",
+                        [
+                        "Bring a large pot of salted water to a boil. Cook the pasta for 2-3 minutes, or until tender. Drain, reserving 3/4 cup of the pasta water in case you need any for serving.",
+                        "Serve in any of the ways suggested above and enjoy immediately."
+                        ]
+                    ]
+                ]
+
+                """
+                "Return the result as a nested list structure without any additional words or notation. Here is the input you should fill the structure's content with:\n\n"
+                f"Here are the instructions: \n\n {instructions}"
             ),
         },
     ]
@@ -73,19 +116,26 @@ def prune(response_text):
         response_text = response_text[5:]  # Remove '```py\n'
     if response_text.startswith("```python"):
         response_text = response_text[9:]  # Remove '```py\n'
-    if response_text.startswish("```plaintext"):
+    if response_text.startswith("```json"):
+        response_text = response_text[7:]  # Remove '```json\n'
+    if response_text.startswith("```plaintext"):
         response_text = response_text[12:]  # Remove '```plaintext\n'
-
+    if response_text.startswith("```"):
+        response_text = response_text[12:]  # Remove '```plaintext\n'
     if response_text.endswith("```"):
         response_text = response_text[:-3]  # Remove '```'
     
     return response_text
 
+
 def get_organized_instructions(instructions):
     # converts the already organized instructions (from a string) to a literal array (list)
-    organized = ast.literal_eval(organize_instructions(instructions))
+    organized = organize_instructions(instructions)
+    pruned_organized = prune(organized)
+        
+    final_organized_instructions_list = ast.literal_eval(pruned_organized)
 
-    return organized
+    return final_organized_instructions_list
 
 
 # Example usage
@@ -94,12 +144,12 @@ if __name__ == "__main__":
     url = "https://www.indianhealthyrecipes.com/palak-paneer-recipe-easy-paneer-recipes-step-by-step-pics/"
     recipe = get_recipe(url)
     instructions = recipe["instructions"]
-    organized = ast.literal_eval(organize_instructions(instructions))
+    organized = get_organized_instructions(instructions)
     recipe["instructions"] = organized
     print("")
     print("")
     print("")
-    print(recipe)
+    print(organized)
     print(type(recipe))
 
     

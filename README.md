@@ -20,11 +20,11 @@ My Recipe App is a user-friendly React application that allows users to input a 
 ### Installation
 1. Clone the repository:
    ```
-   git clone <repository-url>
+   git clone https://github.com/vanshs64/souschef-pro/
    ```
 2. Navigate to the project directory:
    ```
-   cd my-react-app
+   cd souschef-pro
    ```
 3. Install the dependencies:
    ```
@@ -74,7 +74,7 @@ npm run build
 ## Contributing
 Contributions are welcome! Please open an issue or submit a pull request for any enhancements or bug fixes.
 
-This project began at a Hackathon with @azhahd, @YeehawMcfly, and @shababaa
+This project began at a Hackathon with @azhahd, @YeehawMcfly, and @shababaa.
 Devpost Project: https://devpost.com/software/souschef-k16pgi
 
 ## License

@@ -1,7 +1,7 @@
 import './components/styles/Carousel.css';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Clock, Users } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, Users, Home, X } from 'lucide-react';
 
 // Define the structure of the recipe data
 interface RecipeData {
@@ -26,6 +26,15 @@ const RecipeCarousel = () => {
 
   const [currentStep, setCurrentStep] = useState(0);
   const [steps, setSteps] = useState<Step[]>([]);
+
+  const navigate = useNavigate();
+  const [showCompletion, setShowCompletion] = useState(false);
+  const isLastStep = currentStep === steps.length -1;
+
+  const handleComplete = () => {
+    setShowCompletion(true);
+  };
+
 
   // Parse instructions into steps
   useEffect(() => {
@@ -90,6 +99,8 @@ const RecipeCarousel = () => {
     setCurrentStep((prev) => (prev - 1 + steps.length) % steps.length);
   };
 
+
+
   // Show loading state if steps are not yet parsed
   if (steps.length === 0) {
     return (
@@ -98,6 +109,41 @@ const RecipeCarousel = () => {
       </div>
     );
   }
+
+  interface CompletionModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onNewRecipe: () => void;
+  }
+
+  const CompletionModal = ({ isOpen, onClose, onNewRecipe }: CompletionModalProps) => {
+    if (!isOpen) return null;
+  
+    return (
+      <div className="modal-overlay">
+        <div className="modal-backdrop" onClick={onClose} />
+        <div className="modal-content">
+          <button className="modal-close" onClick={onClose}>
+            <X className="w-6 h-6" />
+          </button>
+          <div className="modal-body">
+            <h2>Congratulations!</h2>
+            <p>You've successfully completed this recipe. Time to taste your creation!</p>
+            <div className="modal-actions">
+              <button className="modal-button primary" onClick={onNewRecipe}>
+                <Home className="w-4 h-4" />
+                Try New Recipe
+              </button>
+              <button className="modal-button secondary" onClick={onClose}>
+                Stay Here
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
 
   return (
     <div className="recipe-page">
@@ -167,16 +213,17 @@ const RecipeCarousel = () => {
 
             {/* Navigation */}
             <div className="navigation">
-              <button
-                onClick={prevStep}
-                className="nav-button prev"
+              <button 
+                onClick={prevStep} 
+                className="nav-button prev" 
                 disabled={currentStep === 0}
               >
                 <ChevronLeft />
                 Previous
               </button>
+              
               <div className="step-dots">
-                {steps.map((_, idx) => (
+                {Array(steps.length).fill(0).map((_, idx) => (
                   <button
                     key={idx}
                     onClick={() => setCurrentStep(idx)}
@@ -184,15 +231,21 @@ const RecipeCarousel = () => {
                   />
                 ))}
               </div>
-              <button
-                onClick={nextStep}
+
+              <button 
+                onClick={isLastStep ? handleComplete : nextStep} 
                 className="nav-button next"
-                disabled={currentStep === steps.length - 1}
               >
                 Next
                 <ChevronRight />
               </button>
             </div>
+
+            <CompletionModal 
+              isOpen={showCompletion}
+              onClose={() => setShowCompletion(false)}
+              onNewRecipe={() => navigate('/')}
+            />
           </div>
         </div>
       </div>

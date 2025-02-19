@@ -11,8 +11,8 @@ createRoot(document.getElementById('root')!).render(
     <Router>
       <Routes>
         <Route path="/" element={<App />} />
-        <Route path="/recipe" element={<RecipePage />} />
-        <Route path="/carousel" element={<Carousel/>}/>
+        <Route path="/recipe" element={<Carousel />} />
+        {/* <Route path="/carousel" element={<RecipePage/>}/> */}
         {/* Add more routes as needed */}
       </Routes>
     </Router>

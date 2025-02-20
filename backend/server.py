@@ -4,8 +4,9 @@ from flask_cors import CORS
 from recipe import get_recipe
 from interpret import get_organized_instructions
 
+
 app = Flask(__name__)
-CORS(app)  # Allow requests from frontend (localhost:3000)
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 
 # Example recipe URL
 test_website = "https://www.allrecipes.com/recipe/45040/pav-bhaji/"
@@ -83,17 +84,31 @@ test_recipe = {
 # CHANGE THIS TO SCRAPED_RECIPE DICTIONARY, RIGHTNOW WE'RE RETURNING THE TEST_RECIPE DICTIONARY TO AVOID MAKING EXTRA API CALLS
 @app.route('/scrape_recipe', methods=['POST'])
 def scrape_recipe():
-    data = request.get_json() # take the "body" of the fetch request from App.tsx
-    
-    url = data.get('url', test_website)
-    print(url)
-    scraped_recipe = get_recipe(url)
+    try:
+        data = request.get_json()  # Extract JSON body
+        url = data.get('url', test_website)
 
-    organized_instructions = get_organized_instructions(scraped_recipe["instructions"])
-  
-    scraped_recipe["instructions"] = organized_instructions # Update the organized instructions to the scraped recipe
+        print("Scraping URL:", url)
+        scraped_recipe = get_recipe(url)
+        
 
-    return scraped_recipe
+        if not scraped_recipe:
+            return jsonify({"error": "Failed to scrape recipe"}), 500
+
+        organized_instructions = get_organized_instructions(scraped_recipe["instructions"])
+        scraped_recipe["instructions"] = organized_instructions  
+
+        return jsonify(scraped_recipe)
+
+    except Exception as e:
+        error_message = str(e)
+        print("Error in scrape_recipe:", error_message)
+        if isinstance(e, ValueError):
+            return jsonify({"error": "Invalid URL"}), 400
+        elif isinstance(e, ConnectionError):
+            return jsonify({"error": "Network Error"}), 503
+        else:
+            return jsonify({"error": "Internal Server Error"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)

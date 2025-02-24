@@ -5,6 +5,8 @@ import './components/styles/RecipeForm.css';
 import "reactflow/dist/style.css";
 import { useNavigate } from 'react-router-dom';
 
+import LoadingSpinner from './components/LoadingSpinner';
+
 type Instruction = string | Instruction[];
 
 function App() {
@@ -19,6 +21,7 @@ function App() {
   const [recipeFetched, setRecipeFetched] = useState<boolean>(false);
   const [recipeInput, setRecipeInput] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const isValidURL = (url: string) => {
     try {
@@ -45,24 +48,29 @@ function App() {
   }, [recipeFetched]);
 
   const fetchRecipe = async () => {
+    setIsLoading(true);
     try {
       const recipeURL = (document.getElementsByName("recipeURL")[0] as HTMLInputElement).value;
 
       if (!isValidURL(recipeURL)) {
         setErrorMessage("Please enter a valid URL.");
+        setIsLoading(false);
         return;
       }
 
       const response = await fetch("http://localhost:5000/scrape_recipe", {
         method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({ url: recipeURL }),
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        const errorData = await response.json();
+        setErrorMessage(`Error: ${errorData.error}. Message: ${errorData.message}`);
+        setIsLoading(false);
+        return;
       }
 
       const data = await response.json();
@@ -80,9 +88,10 @@ function App() {
 
     } catch (error) {
       console.error("There was an error fetching the recipe:", error);
+      setErrorMessage("An error occurred while processing the recipe.");
+      setIsLoading(false);
     }
   };
-
   const handleRecipeSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -104,6 +113,7 @@ function App() {
   return (
     <>
     <div className='app-wrapper'>
+      {isLoading && <LoadingSpinner />}
 
       <div className="title-container">
         <div className="logo-header-container">
@@ -119,14 +129,16 @@ function App() {
             <div className="error-message">{errorMessage}</div>
             <div className="input-group">
               <input
-                type="url"
+                type="input"
                 name="recipeURL"
                 placeholder="Enter recipe URL"
                 className="rounded-input"
                 value={recipeInput}
                 onChange={(e) => setRecipeInput(e.target.value)}
               />
-              <button type="submit">Process</button>
+                <button type="submit" disabled={isLoading}>
+                  {isLoading ? 'Processing...' : 'Process'}
+                </button>
             </div>
           </form>
         </div>

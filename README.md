@@ -2,7 +2,7 @@
 SousChef is not a teacher or recipe book, SousChef empowers users to cook smarter, not harder.
 
 ## Overview
-My Recipe App is a user-friendly React application that allows users to input a recipe URL or paste recipe text directly. The app extracts important details such as ingredients, steps, durations, and provides helpful cooking techniques. Users can specify the quantity of the recipe they want and receive step-by-step instructions in a friendly manner.
+SousChef is a user-friendly React application that allows users to input a recipe URL or paste recipe text directly. The app extracts important details such as ingredients, steps, durations, and provides helpful cooking techniques. Users can specify the quantity of the recipe they want and receive step-by-step instructions in a friendly manner.
 
 ## Features
 - Input a recipe URL or paste recipe text directly.
@@ -76,6 +76,7 @@ Contributions are welcome! Please open an issue or submit a pull request for any
 
 This project began at a Hackathon with @azhahd, @YeehawMcfly, and @shababaa.
 Devpost Project: https://devpost.com/software/souschef-k16pgi
+Hackathon Repository: https://github.com/vanshs64/souschef/
 
 ## License
 This project is licensed under the MIT License.

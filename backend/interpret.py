@@ -103,53 +103,66 @@ def organize_instructions(instructions):
 
 def prune(response_text):
     """
-    Prunes the response text by removing '```py' at the beginning and '```' at the end if present,
-    and converts the result into a list.
+    Prunes the response text by removing '```py', '```python', '```json', '```plaintext' at the beginning
+    and '```' at the end if present, and converts the result into a list.
 
     Args:
         response_text (str): The response text from OpenAI.
 
     Returns:
-        list: The pruned and converted list of instructions.
+        str: The pruned response text.
     """
-    if response_text.startswith("```py"):
-        response_text = response_text[5:]  # Remove '```py\n'
     if response_text.startswith("```python"):
-        response_text = response_text[9:]  # Remove '```py\n'
-    if response_text.startswith("```json"):
-        response_text = response_text[7:]  # Remove '```json\n'
-    if response_text.startswith("```plaintext"):
-        response_text = response_text[12:]  # Remove '```plaintext\n'
-    if response_text.startswith("```"):
-        response_text = response_text[12:]  # Remove '```plaintext\n'
+        response_text = response_text.split("```python")[1]  # Remove the first '```python' block
+    if response_text.startswith("```py"):
+        response_text = response_text.split("```py")[1]  # Remove the first '```py' block
+    elif response_text.startswith("```json"):
+        response_text = response_text.split("```json")[1]  # Remove the first '```json' block
+    elif response_text.startswith("```plaintext"):
+        response_text = response_text.split("```plaintext")[1]  # Remove the first '```plaintext' block
+
+    elif response_text.startswith("```"):
+        response_text = response_text.split("```")[1]  # Remove the first '```' block
     if response_text.endswith("```"):
-        response_text = response_text[:-3]  # Remove '```'
+        response_text = response_text.split("```")[0]  # Remove the last '```' block
     
     return response_text
 
-
 def get_organized_instructions(instructions):
-    # converts the already organized instructions (from a string) to a literal array (list)
-    organized = organize_instructions(instructions)
+
+    # take scraped instructions and use AI to organize structure
+    organized = organize_instructions(instructions) #
+
+    # prune the delimiters for ``` syntax bs
     pruned_organized = prune(organized)
-        
+
+    # convert the string to a list
     final_organized_instructions_list = ast.literal_eval(pruned_organized)
 
+    # return instructions
     return final_organized_instructions_list
 
 
 # Example usage
 if __name__ == "__main__":
     # Example recipe URL
-    url = "https://www.indianhealthyrecipes.com/palak-paneer-recipe-easy-paneer-recipes-step-by-step-pics/"
+    url = "https://tastesbetterfromscratch.com/sticky-toffee-pudding/"
     recipe = get_recipe(url)
-    instructions = recipe["instructions"]
-    organized = get_organized_instructions(instructions)
-    recipe["instructions"] = organized
-    print("")
-    print("")
-    print("")
-    print(organized)
-    print(type(recipe))
+    
+    if not recipe:
+        instructions = recipe["instructions"]
 
+        print(f"{instructions}\n\n\n")
+
+        organized = get_organized_instructions(instructions)
+
+        print(f"{organized}\n\n\n")
+
+        pruned_organized = prune(organized)
+
+        print(f"{pruned_organized}\n\n\n")    
+
+        recipe["instructions"] = pruned_organized
+
+        print(type(recipe))
     

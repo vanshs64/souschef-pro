@@ -76,6 +76,7 @@ Contributions are welcome! Please open an issue or submit a pull request for any
 
 This project began at a Hackathon with @azhahd, @YeehawMcfly, and @shababaa.
 Devpost Project: https://devpost.com/software/souschef-k16pgi
+Hackathon Repository: https://github.com/vanshs64/souschef/
 
 ## License
 This project is licensed under the MIT License.
